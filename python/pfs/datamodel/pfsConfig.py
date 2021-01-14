@@ -64,6 +64,11 @@ class PfsDesign:
         Right Ascension of telescope boresight.
     decBoresight : `float`, degrees
         Declination of telescope boresight.
+    posAng : `float`, degrees
+        The position angle from the
+        North Celestial Pole to the PFI_Y axis,
+        measured clockwise with respect to the
+        positive PFI_Z axis
     fiberId : `numpy.ndarary` of `int32`
         Fiber identifier for each fiber.
     tract : `numpy.ndarray` of `int32`
@@ -185,6 +190,7 @@ class PfsDesign:
                 raise RuntimeError("Wrong shape for %s: %s vs (%d,2)" % (nn, matrix.shape, len(self.fiberId)))
 
     def __init__(self, pfsDesignId, raBoresight, decBoresight,
+                 posAng,
                  fiberId, tract, patch, ra, dec, catId, objId,
                  targetType, fiberStatus,
                  fiberFlux,
@@ -197,6 +203,7 @@ class PfsDesign:
         self.pfsDesignId = pfsDesignId
         self.raBoresight = raBoresight
         self.decBoresight = decBoresight
+        self.posAng = posAng
 
         self.fiberId = np.array(fiberId)
         self.tract = np.array(tract)
@@ -269,6 +276,7 @@ class PfsDesign:
             phu = fd[0].header
             raBoresight = phu['RA']
             decBoresight = phu['DEC']
+            posAng = phu['POSANG']
             data = fd[cls._hduName].data
 
             for nn in cls._fields:
@@ -299,7 +307,7 @@ class PfsDesign:
                 totalFluxErr[row['fiberId']].append(row['totalFluxErr'])
                 filterNames[row['fiberId']].append(row['filterName'])
 
-        return cls(**kwargs, raBoresight=raBoresight, decBoresight=decBoresight,
+        return cls(**kwargs, raBoresight=raBoresight, decBoresight=decBoresight, posAng=posAng,
                    fiberFlux=[np.array(fiberFlux[ii]) for ii in fiberId],
                    psfFlux=[np.array(psfFlux[ii]) for ii in fiberId],
                    totalFlux=[np.array(totalFlux[ii]) for ii in fiberId],
@@ -339,6 +347,7 @@ class PfsDesign:
         hdr = pyfits.Header()
         hdr['RA'] = (self.raBoresight, "Telescope boresight RA, degrees")
         hdr['DEC'] = (self.decBoresight, "Telescope boresight Dec, degrees")
+        hdr['POSANG'] = (self.posAng, "PFI position angle, degrees")
         hdr.update(TargetType.getFitsHeaders())
         hdr.update(FiberStatus.getFitsHeaders())
         hdu = pyfits.PrimaryHDU(header=hdr)
@@ -578,6 +587,11 @@ class PfsConfig(PfsDesign):
         Right Ascension of telescope boresight.
     decBoresight : `float`, degrees
         Declination of telescope boresight.
+    posAng : `float`, degrees
+        The position angle from the
+        North Celestial Pole to the PFI_Y axis,
+        measured clockwise with respect to the
+        positive PFI_Z axis
     fiberId : `numpy.ndarary` of `int32`
         Fiber identifier for each fiber.
     tract : `numpy.ndarray` of `int32`
@@ -648,6 +662,7 @@ class PfsConfig(PfsDesign):
     fileNameFormat = "pfsConfig-0x%016x-%06d.fits"
 
     def __init__(self, pfsDesignId, visit0, raBoresight, decBoresight,
+                 posAng,
                  fiberId, tract, patch, ra, dec, catId, objId,
                  targetType, fiberStatus,
                  fiberFlux,
@@ -659,7 +674,9 @@ class PfsConfig(PfsDesign):
                  filterNames, pfiCenter, pfiNominal):
         self.visit0 = visit0
         self.pfiCenter = np.array(pfiCenter)
-        super().__init__(pfsDesignId, raBoresight, decBoresight, fiberId, tract, patch, ra, dec,
+        super().__init__(pfsDesignId, raBoresight, decBoresight,
+                         posAng,
+                         fiberId, tract, patch, ra, dec,
                          catId, objId, targetType, fiberStatus,
                          fiberFlux,
                          psfFlux,
@@ -696,7 +713,7 @@ class PfsConfig(PfsDesign):
         self : `PfsConfig`
             Constructed ``PfsConfig`.
         """
-        keywords = ["pfsDesignId", "raBoresight", "decBoresight"]
+        keywords = ["pfsDesignId", "raBoresight", "decBoresight", "posAng"]
         kwargs = {kk: getattr(pfsDesign, kk) for kk in pfsDesign._keywords + keywords}
         kwargs["fiberStatus"] = pfsDesign.fiberStatus
         kwargs["visit0"] = visit0

@@ -270,6 +270,11 @@ The PDU has keys indicating the intended pointing of the telescope boresight.
 
       RA        Intended telescope boresight Right Ascension (degrees)
       DEC       Intended telescope boresight Declination (degrees)
+      POSANG    Intended Position Angle of the PFI (degrees).
+                    This corresponds to the angle
+                    from the North Celestial Pole to the PFI_Y axis,
+                    measured clockwise looking along the positive PFI_Z axis
+                    (ie., the telescope pointing direction).
 
 The DESIGN table lists for each object:
       fiberId        32-bit int
