@@ -270,6 +270,7 @@ The PDU has keys indicating the intended pointing of the telescope boresight.
 
       RA        Intended telescope boresight Right Ascension (degrees)
       DEC       Intended telescope boresight Declination (degrees)
+      PA        Intended Position Angle of the Field of View (degrees)
 
 The DESIGN table lists for each object:
       fiberId        32-bit int
@@ -326,6 +327,34 @@ The 'filterName' values in the PHOTOMETRY table will specify particular
 transmission curves used by the pipeline, and therefore the range of
 permitted values is limited to a set to be specified by the DRP team.
 There will be a mechanism for adding to this set.
+
+The GUIDESTARS table lists:
+      ra             64-bit float (degrees)
+      dec            64-bit float (degrees)
+      pm             32-bit float (deg/s)
+      parallax       32-bit float (degrees)
+      flux           32-bit float (nJy)
+      color          32-bit float
+      AgId           32-bit int
+      AgX            32-bit float (pixels)
+      AgY            32-bit float (pixels)
+
+Where the:
+    * ra corresponds to the Right Ascension of the guide star
+    * dec corresponds to the Declination of the guide star
+    * pm is the proper motion of the guide star
+    * parallax is the observed parallax of the guide star
+    * flux is the total flux for the guide star
+    * color is the B-V color for that guide star
+    * AgId is the identifier for the AG camera that will observe that guide star
+    * AgX is the X-position on the corresponding AG camera where the guide star
+          is expected to be detected
+    * AgY is the Y-position on the corresponding AG camera where the guide star
+          is expected to be detected
+
+Additional keywords are required for the GUIDESTARS HDU:
+    * EPOCH epoch for the celestial coordinate system used to measure ra and dec.
+    * TELELEV the telescope elevation (degrees)
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
