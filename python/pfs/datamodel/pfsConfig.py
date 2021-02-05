@@ -132,6 +132,7 @@ class PfsDesign:
                    "filterNames"]  # List of photometry fields
     _keywords = list(_fields) + _photometry
     _hduName = "DESIGN"
+    _POSANG_DEFAULT = 0.0
 
     fileNameFormat = "pfsDesign-0x%016x.fits"
 
@@ -276,7 +277,11 @@ class PfsDesign:
             phu = fd[0].header
             raBoresight = phu['RA']
             decBoresight = phu['DEC']
-            posAng = phu['POSANG']
+            # If POSANG does not exist, use default.
+            # This default should be removed when the
+            # relevant test datasets have this keyword
+            # populated.
+            posAng = phu.get('POSANG', cls._POSANG_DEFAULT)
             data = fd[cls._hduName].data
 
             for nn in cls._fields:
