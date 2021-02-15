@@ -112,7 +112,8 @@ class PfsFiberArraySet:
         filename : `str`
             Filename, without directory.
         """
-        return cls.filenameFormat % identity.getDict()
+
+        return cls.filenameFormat % identity#.getDict() # // remove for compatibility
 
     @classmethod
     def _parseFilename(cls, path):
